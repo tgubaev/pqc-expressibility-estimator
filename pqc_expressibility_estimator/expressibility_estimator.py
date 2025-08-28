@@ -59,7 +59,7 @@ class ExpressibilityEstimator:
         ----------
         batch_size : int, optional
             Number of fidelities sampled in one iteration. The default is
-            10000.
+            5000.
         seed : int, optional
             Seed for the random number generator. The default is None.
 
