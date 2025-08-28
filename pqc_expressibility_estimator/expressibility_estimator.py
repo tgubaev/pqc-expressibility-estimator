@@ -148,7 +148,7 @@ class ExpressibilityEstimator:
         # return the memory-map
         return fidelities
 
-    def compute_fidelity_pdf(self, num_bins=75):
+    def compute_fidelity_pdf(self, fidelities=None, num_bins=75):
         '''
         Computes fidelity probability density histogram.
 
@@ -172,19 +172,26 @@ class ExpressibilityEstimator:
             NumPy array of bin boundaries.
 
         '''
-        # check if the file exists
-        if not os.path.isfile(self.fidelities_filename):
-            raise FileNotFoundError(
-                f"The file '{self.fidelities_filename}' does not exist."
+        if fidelities is not None:
+            if fidelities.shape != self.fidelities_shape:
+                raise ValueError(
+                    f"Expected shape {self.fidelities_shape}, but got \
+                        {fidelities.shape}"
+                )
+        else:
+            # check if the file exists
+            if not os.path.isfile(self.fidelities_filename):
+                raise FileNotFoundError(
+                    f"The file '{self.fidelities_filename}' does not exist."
+                )
+                
+            # create a memory-map to the array of fidelities
+            fidelities = np.memmap(
+                self.fidelities_filename,
+                dtype=self.fidelities_dtype,
+                mode='r',
+                shape=self.fidelities_shape
             )
-            
-        # create a memory-map to the array of fidelities
-        fidelities = np.memmap(
-            self.fidelities_filename,
-            dtype=self.fidelities_dtype,
-            mode='r',
-            shape=self.fidelities_shape
-        )
 
         # compute the probability density histogram
         hist, bin_edges = np.histogram(
