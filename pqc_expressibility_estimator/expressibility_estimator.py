@@ -154,6 +154,8 @@ class ExpressibilityEstimator:
 
         Parameters
         ----------
+        fidelities : numpy.array, optional
+            NumPy array of fidelities. The default is None.
         num_bins : int, optional
             Number of bins used to compute the fidelity probability density
             histogram. The default is 75.
@@ -201,12 +203,14 @@ class ExpressibilityEstimator:
         # return the probability density function
         return hist, bin_edges
 
-    def compute_kl_divergence(self, num_bins=75):
+    def compute_kl_divergence(self, fidelities=None, num_bins=75):
         '''
         Computes KL divergence.
 
         Parameters
         ----------
+        fidelities : numpy.array, optional
+            NumPy array of fidelities. The default is None.
         num_bins : int, optional
             Number of bins used to compute the fidelity probability density
             histogram. The default is 75.
@@ -218,7 +222,9 @@ class ExpressibilityEstimator:
 
         '''
         # compute the probability density histogram
-        hist, bin_edges = self.compute_fidelity_pdf(num_bins=num_bins)
+        hist, bin_edges = self.compute_fidelity_pdf(
+            fidelities=fidelities, num_bins=num_bins
+        )
         
         # Initialize the KL-divergence
         D_KL = 0
