@@ -148,7 +148,6 @@ def sample_fidelities(
 def compute_fidelity_pdf(
         fidelities=None,
         filename_prefix=None,
-        num_fidelities=None,
         num_bins=75
 ):
     '''
@@ -161,10 +160,6 @@ def compute_fidelity_pdf(
     filename_prefix : string, optional
         If not None, ignores the provided fidelities and instead reads them
         from '<filename_prefix>_fd.dat'. The default is None.
-    num_fidelities : int, optional
-        If filename_prefix is not None, num_fidelities fidelities are read
-        from the file. If num_fidelities is None, the function will try
-        reading it from meta data. The default is None.
     num_bins : int, optional
         Number of bins used to compute the fidelity probability density
         histogram. The default is 75.
@@ -174,6 +169,8 @@ def compute_fidelity_pdf(
     FileNotFoundError
         Raises FileNotFoundError exception if the file containing
         fidelities does not exist.
+    ValueError
+        Raises ValueError if no fidelities were provided.
 
     Returns
     -------
@@ -192,29 +189,16 @@ def compute_fidelity_pdf(
                 f"The file '{fidelities_filename}' does not exist."
             )
         
-        # if num_fidelities is not provided, try reading it from meta data
-        if num_fidelities is None:
-            metadata_filename=f'{filename_prefix}_md.pkl'
-            if os.path.isfile(metadata_filename):
-                with open(metadata_filename, 'rb') as file:
-                    loaded_data = pickle.load(file)
-                    num_fidelities = loaded_data['num_fidelities']
-            else:
-                raise FileNotFoundError(
-                    f"num_fidelities is None and the file '{metadata_filename}' does not exist."
-                )
-        
         # create a memory-map to the array of fidelities
         fidelities = np.memmap(
             fidelities_filename,
             dtype=np.float64,
-            mode='w+',
-            shape=(num_fidelities,)
+            mode='r'
         )
     else:
         if fidelities is None:
             raise ValueError(
-                "Fidelities were not provided."
+                "No fidelities were provided."
             )
 
     # compute the probability density histogram
@@ -249,7 +233,6 @@ def compute_kl_divergence(
         fidelities=None,
         num_qubits=None,
         filename_prefix=None,
-        num_fidelities=None,
         num_bins=75,
 ):
     '''
@@ -265,10 +248,6 @@ def compute_kl_divergence(
     filename_prefix : string, optional
         If not None, ignores the provided fidelities and instead reads them
         from '<filename_prefix>_fd.dat'. The default is None.
-    num_fidelities : int, optional
-        If filename_prefix is not None, num_fidelities fidelities are read
-        from the file. If num_fidelities is None, the function will try
-        reading it from meta data. The default is None.
     num_bins : int, optional
         Number of bins used to compute the fidelity probability density
         histogram. The default is 75.
@@ -283,7 +262,6 @@ def compute_kl_divergence(
     hist, bin_edges = compute_fidelity_pdf(
         fidelities=fidelities,
         filename_prefix=filename_prefix,
-        num_fidelities=num_fidelities,
         num_bins=num_bins
     )
     

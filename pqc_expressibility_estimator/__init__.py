@@ -1,1 +1,1 @@
-from .expressibility_estimator import ExpressibilityEstimator
+from .expressibility_estimator import sample_fidelities, compute_fidelity_pdf, haar_fidelity_pdf, compute_kl_divergence, ExpressibilityEstimator
