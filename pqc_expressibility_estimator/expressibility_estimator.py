@@ -217,6 +217,8 @@ def haar_fidelity_pdf(
 
     Parameters
     ----------
+    num_qubits : int
+        Number of qubits.
     F : float
         Fidelity.
 
@@ -251,6 +253,14 @@ def compute_kl_divergence(
     num_bins : int, optional
         Number of bins used to compute the fidelity probability density
         histogram. The default is 75.
+
+    Raises
+    ------
+    FileNotFoundError
+        Raises FileNotFoundError exception if the file containing
+        meta data does not exist.
+    ValueError
+        Raises ValueError if num_qubits was not provided.
 
     Returns
     -------
